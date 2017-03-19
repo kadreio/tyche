@@ -1,0 +1,7 @@
+{
+  "name": "Tyche",
+  "short_name": "Tyche",
+  "description": "A modern web based calendar.",
+  "start_url": "/",
+  "display": "standalone"
+}

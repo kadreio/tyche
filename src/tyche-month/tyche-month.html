@@ -1,0 +1,75 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../tyche-day/tyche-day.html">
+
+<dom-module id="tyche-month">
+  <template>
+    <style>
+        :host {
+            display: flex;
+            flex: 1;
+        }
+
+        #main {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            border-right: 1px solid rgba(0,0,0,.2);
+            border-bottom: 1px solid rgba(0,0,0,.2);
+        }
+
+        .week {
+            display: flex;
+            flex: 1;
+        }
+
+        .week > tyche-day {
+            flex:1;
+            border-top: 1px solid rgba(0,0,0,.2);
+            border-left: 1px solid rgba(0,0,0,.2);
+        }
+    </style>
+
+    <div id="main">
+    </div>
+  </template>
+
+  <script>
+    class TycheMonth extends Polymer.Element {
+        static get properties() {
+            return {
+                month: {
+                    type: String
+                },
+            }
+        }
+        ready() {
+            this.DAYS_IN_WEEK = 7;
+            this.WEEKS_TO_SHOW = 6;
+            this.DAYS_OF_THE_WEEK = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+            const monthOffset = moment(this.month).isoWeekday();
+
+            const grid = [];
+            for(var i =0; i < this.WEEKS_TO_SHOW; i++){
+                grid[i] = this.DAYS_OF_THE_WEEK.slice();
+            }
+            const monthFragment = document.createDocumentFragment();
+            grid.forEach( (week, i) => {
+                const weekElement = document.createElement('div');
+                weekElement.className = 'week';
+                week.forEach( (day, j) => {
+                    const dayElement = document.createElement('tyche-day');
+                    const gridPos = ((i*7)+j);
+                    dayElement.date = moment(this.month).add(gridPos - monthOffset, 'day').format();
+                    weekElement.appendChild(dayElement);
+                })
+                monthFragment.appendChild(weekElement);
+            })
+            this.$.main.appendChild(monthFragment);
+            super.ready();
+        }
+        static get is() { return 'tyche-month'; }
+    }
+
+    window.customElements.define(TycheMonth.is, TycheMonth);
+  </script>
+</dom-module>

@@ -1,0 +1,43 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<script src="../../bower_components/moment/moment.js"></script>
+<link rel="import" href="../tyche-month/tyche-month.html">
+
+<dom-module id="tyche-app">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        width: 100vw;
+        height: 100vh;
+
+      }
+      tyche-control-panel {
+        width: 100px;
+      }
+      tyche-month{
+        flex: 1;
+      }
+
+    </style>
+    <tyche-control-panel>
+        Hello
+    </tyche-control-panel>
+    <tyche-month month="2017-03"></tyche-month>
+  </template>
+
+  <script>
+    class MyApplication extends Polymer.Element {
+      static get is() { return 'tyche-app'; }
+      static get properties() {
+        return {
+          prop1: {
+            type: String,
+            value: 'tyche-app'
+          }
+        };
+      }
+    }
+
+    window.customElements.define(MyApplication.is, MyApplication);
+  </script>
+</dom-module>

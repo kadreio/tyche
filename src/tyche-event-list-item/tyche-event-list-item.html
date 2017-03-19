@@ -1,0 +1,31 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<script src="../../bower_components/moment/moment.js"></script>
+
+<dom-module id="tyche-event-list-item">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        flex-direction: column;
+      }
+    </style>
+    <div>
+        [[event]]
+    </div>
+  </template>
+
+  <script>
+    class TycheEventListItem extends Polymer.Element {
+      static get is() { return 'tyche-event-list-item'; }
+      static get properties() {
+        return {
+            event: {
+                type: String
+            }
+        };
+      }
+    }
+
+    window.customElements.define(TycheEventListItem.is, TycheEventListItem);
+  </script>
+</dom-module>
