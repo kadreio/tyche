@@ -1,5 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../tyche-day/tyche-day.html">
+<link rel="import" href="../tyche-week/tyche-week.html">
 
 <dom-module id="tyche-month">
   <template>
@@ -7,30 +7,38 @@
         :host {
             display: flex;
             flex: 1;
-        }
-
-        #main {
-            display: flex;
-            flex: 1;
             flex-direction: column;
             border-right: 1px solid rgba(0,0,0,.2);
             border-bottom: 1px solid rgba(0,0,0,.2);
         }
-
-        .week {
+        #top-bar{
+            display: flex;
+            flex-shrink: 0;
+            background-color: #c0ffee;
+            text-align: center;
+            font-size: 1.7em;
+            font-weight: bold;
+            text-align: center;
+            padding: 16px;
+        }
+        #calendar {
             display: flex;
             flex: 1;
+            flex-direction: column;
+            overflow: auto;
         }
-
-        .week > tyche-day {
-            flex:1;
-            border-top: 1px solid rgba(0,0,0,.2);
-            border-left: 1px solid rgba(0,0,0,.2);
+        tyche-week {
+            min-height: calc(100% / 6);
         }
     </style>
 
-    <div id="main">
-    </div>
+        <div id="top-bar">
+            [[title]]
+        </div>
+        <div id="calendar">
+
+        </div>
+
   </template>
 
   <script>
@@ -43,29 +51,81 @@
             }
         }
         ready() {
-            this.DAYS_IN_WEEK = 7;
-            this.WEEKS_TO_SHOW = 6;
-            this.DAYS_OF_THE_WEEK = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
-            const monthOffset = moment(this.month).isoWeekday();
 
-            const grid = [];
-            for(var i =0; i < this.WEEKS_TO_SHOW; i++){
-                grid[i] = this.DAYS_OF_THE_WEEK.slice();
-            }
-            const monthFragment = document.createDocumentFragment();
-            grid.forEach( (week, i) => {
-                const weekElement = document.createElement('div');
-                weekElement.className = 'week';
-                week.forEach( (day, j) => {
-                    const dayElement = document.createElement('tyche-day');
-                    const gridPos = ((i*7)+j);
-                    dayElement.date = moment(this.month).add(gridPos - monthOffset, 'day').format();
-                    weekElement.appendChild(dayElement);
-                })
-                monthFragment.appendChild(weekElement);
-            })
-            this.$.main.appendChild(monthFragment);
+            this._init();
+            this.$.calendar.addEventListener('scroll', e => {
+                this._onCalendarScroll(e);
+            } );
+
             super.ready();
+        }
+        _init() {
+            const WEEKS_TO_SHOW = 10;
+            const start = moment(this.month).startOf('month');
+            this._addWeekToEnd(start);
+            for(var i =0; i < WEEKS_TO_SHOW - 1; i++) {
+                this._addWeekToEnd();
+            }
+            this._updateTitle();
+        }
+        _removeWeekFromTop(){
+            this.$.calendar.removeChild(this._getWeekNodes()[0]);
+        }
+        _addWeekToEnd(date){
+            let week = document.createElement('tyche-week');
+            if(date){
+                week.date = moment(date);
+            }
+            else{
+                let weekNodes = this._getWeekNodes();
+                week.date = moment(weekNodes[weekNodes.length-1].date).add(7,'days');
+            }
+            this.$.calendar.append(week);
+        }
+        _addWeekToStart(){
+            let week = document.createElement('tyche-week');
+            let weekNodes = this._getWeekNodes();
+            week.date = moment(this._getWeekNodes()[0].date).subtract(7,'days');
+            this.$.calendar.prepend(week);
+        }
+        _getWeekNodes() {
+            //Node lists are hard to work with, casting to array and
+            //filtering all children nodes to just the week elements.
+            return [].slice.call(this.$.calendar.childNodes)
+                    .filter(elem => elem.nodeName === 'TYCHE-WEEK');
+        }
+        _onCalendarScroll(e) {
+            const lastScrollTop = this.lastScrollTop;
+            this.lastScrollTop = this.$.calendar.scrollTop;
+
+            const weeks = this._getWeekNodes();
+            this._updateTitle()
+
+            // if(this.$.calendar.scrollTop < lastScrollTop && this.$.calendar.scrollTop < 150) {
+            //     this._addWeekToStart();
+            //     this._addWeekToStart();
+            //
+            // }
+
+            if(this._getWeekRowOffset(weeks[weeks.length-1]) < this.$.calendar.clientHeight + 300){
+                this._addWeekToEnd();
+            }
+            // else if(weeks.length > 20){
+            //     this._removeWeekFromTop()
+            // }
+        }
+        _updateTitle(){
+            const weeks = this._getWeekNodes();
+            let foundMonth = false;
+            weeks.forEach((elem, i) => {
+                if(!foundMonth && this._getWeekRowOffset(elem) >= 0){
+                    this.title = weeks[i+1].date.format('MMMM, YYYY');
+                    foundMonth = true;
+                }
+            });
+        }
+        _getWeekRowOffset(elem) {
+            return  elem.offsetTop - this.$.calendar.scrollTop;
         }
         static get is() { return 'tyche-month'; }
     }

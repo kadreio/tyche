@@ -1,0 +1,47 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../tyche-day/tyche-day.html">
+
+<dom-module id="tyche-week">
+  <template>
+    <style>
+        :host {
+            display: flex;
+            flex: 1;
+        }
+
+
+        :host tyche-day {
+            flex:1;
+            border-top: 1px solid rgba(0,0,0,.2);
+            border-left: 1px solid rgba(0,0,0,.2);
+        }
+    </style>
+
+        <template is="dom-repeat" items="{{days}}">
+            <tyche-day date="[[item]]"></tyche-day>
+        </template>
+    </template>
+
+  <script>
+    class TycheWeek extends Polymer.Element {
+        static get properties() {
+            return {
+                date: {
+                    type: String
+                }
+            }
+        }
+        ready() {
+            this.DAYS_OF_THE_WEEK = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+            const sunday = moment(this.date).subtract(moment(this.date).weekday(), 'days');
+            this.days = this.DAYS_OF_THE_WEEK.map((_,i) =>{
+                return moment(sunday).add(i, 'days');
+            });
+            super.ready();
+        }
+        static get is() { return 'tyche-week'; }
+    }
+
+    window.customElements.define(TycheWeek.is, TycheWeek);
+  </script>
+</dom-module>

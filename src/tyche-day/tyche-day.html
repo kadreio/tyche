@@ -14,6 +14,10 @@
           border-bottom: 1px solid #ddd;
           padding: 4px;
       }
+      .header[month="Jan"] {
+          background: #1abc9c;
+          color: #ecf0f1;
+      }
       .header[month="Feb"] {
           background: #34495e;
           color: #ecf0f1;
@@ -25,6 +29,41 @@
       .header[month="Apr"] {
           background: #f1c40f;
           color: #ecf0f1;
+      }
+      .header[month="May"] {
+          background: #2ecc71;
+          color: #ecf0f1;
+      }
+      .header[month="Jun"] {
+          background: #e74c3c;
+          color: #ecf0f1;
+      }
+      .header[month="Jul"] {
+          background: #9b59b6;
+          color: #ecf0f1;
+      }
+      .header[month="Aug"] {
+          background: #2c3e50;
+          color: #ecf0f1;
+      }
+      .header[month="Sep"] {
+          background: #d35400;
+          color: #ecf0f1;
+      }
+      .header[month="Oct"] {
+          background: #3498db;
+          color: #ecf0f1;
+      }
+      .header[month="Nov"] {
+          background: #c0392b;
+          color: #ecf0f1;
+      }
+      .header[month="Dec"] {
+          background: #7f8c8d;
+          color: #ecf0f1;
+      }
+      .header[today="true"]{
+            outline:3px solid red;
       }
       .header div {
           flex: 1;
@@ -38,7 +77,7 @@
           font-size: 1.7rem;
       }
     </style>
-    <div class="header" month$="{{month}}">
+    <div class="header" month$="{{month}}" today$="{{today}}">
         <div class="month">[[month]]</div>
         <div class="date">[[day]]</div>
         <div></div>
@@ -64,6 +103,7 @@
             this.mDate = moment(this.date);
             this.day = this.mDate.date();
             this.month = this.mDate.format("MMM")
+            this.today =  moment().isSame(this.mDate, 'd').toString();
             super.ready();
         }
     }
