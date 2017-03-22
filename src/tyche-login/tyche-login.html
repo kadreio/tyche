@@ -1,0 +1,53 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<dom-module id="tyche-login">
+  <template>
+    <style>
+        :host{
+            display: flex;
+            flex: 1;
+            align-items: center;
+            justify-content: center;
+        }
+        :host paper-button{
+            margin-top: 2px;
+        }
+    </style>
+    <h1>Tyche</h1>
+    <paper-button on-click="login">
+        Log in
+    </paper-button>
+  </template>
+
+  <script>
+    class TycheLogin extends Polymer.Element {
+        static get is() { return 'tyche-login'; }
+        static get properties() {
+            return {
+                loggedin: {
+                    type: Boolean,
+                    notify: true
+                }
+            };
+        }
+        login() {
+            let provider = new firebase.auth.GoogleAuthProvider();
+            provider.addScope('email');
+
+            firebase.auth().signInWithPopup(provider)
+            .then((response) => {
+                this.loggedin = true;
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+        }
+        ready () {
+            super.ready();
+        }
+    }
+
+    window.customElements.define(TycheLogin.is, TycheLogin);
+  </script>
+</dom-module>

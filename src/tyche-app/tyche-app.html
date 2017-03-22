@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <script src="../../bower_components/moment/moment.js"></script>
 <link rel="import" href="../tyche-month/tyche-month.html">
+<link rel="import" href="../tyche-login/tyche-login.html">
 
 <dom-module id="tyche-app">
   <template>
@@ -12,7 +13,7 @@
 
       }
       tyche-control-panel {
-        width: 100px;
+        width: 250px;
       }
       tyche-month{
         flex: 1;
@@ -20,10 +21,18 @@
       .top-bar
 
     </style>
-    <tyche-control-panel>
-        Hello
-    </tyche-control-panel>
-    <tyche-month month="2015-03"></tyche-month>
+
+    <template is="dom-if" if="{{!loggedin}}">
+        <tyche-login loggedin="{{loggedin}}">
+
+        </tyche-login>
+    </template>
+    <template is="dom-if" if="{{loggedin}}">
+        <tyche-control-panel>
+            <div on-click="logout">Logout</div>
+        </tyche-control-panel>
+        <tyche-month month="{{today}}"></tyche-month>
+    </template>
   </template>
 
   <script>
@@ -31,11 +40,30 @@
       static get is() { return 'tyche-app'; }
       static get properties() {
         return {
-          prop1: {
-            type: String,
-            value: 'tyche-app'
-          }
-        };
+            loggedin: {
+                type: Boolean,
+                value: false
+            },
+            today: moment()
+        }
+      }
+      logout() {
+          console.log('here');
+          firebase.auth().signOut();
+      }
+      ready() {
+          firebase.auth().onAuthStateChanged((user) => {
+              if (user) {
+                  console.log(user);
+                this.loggedin = true;
+              } else {
+                this.loggedin = false;
+              }
+            });
+            super.ready();
+      }
+      handleError(){
+          console.log('foo');
       }
     }
 
