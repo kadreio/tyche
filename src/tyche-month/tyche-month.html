@@ -14,7 +14,6 @@
         #top-bar{
             display: flex;
             flex-shrink: 0;
-            background-color: #ecf0f1;
             color: #2c3e50;
             text-align: center;
             font-size: 1.7em;
@@ -32,10 +31,42 @@
         tyche-week {
             min-height: calc(100% / 6);
         }
+        .days-of-week{
+            display: flex;
+            box-shadow: 1px 1px 1px #ddd;
+
+        }
+        .days-of-week div{
+            flex: 1;
+        }
     </style>
 
         <div id="top-bar">
             [[title]]
+
+        </div>
+        <div class="days-of-week">
+            <div>
+                Sunday
+            </div>
+            <div>
+                Monday
+            </div>
+            <div>
+                Tuesday
+            </div>
+            <div>
+                Wednesday
+            </div>
+            <div>
+                Thursday
+            </div>
+            <div>
+                Friday
+            </div>
+            <div>
+                Saturday
+            </div>
         </div>
         <div id="calendar">
 

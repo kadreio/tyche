@@ -1,5 +1,4 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<script src="../../bower_components/moment/moment.js"></script>
 <link rel="import" href="../tyche-event-list-item/tyche-event-list-item.html">
 
 <dom-module id="tyche-day">
@@ -13,57 +12,43 @@
           display: flex;
           border-bottom: 1px solid #ddd;
           padding: 4px;
+          flex-shrink: 0;
       }
       .header[month="Jan"] {
-          background: #1abc9c;
-          color: #ecf0f1;
+          border-top:2px solid #1abc9c;
       }
       .header[month="Feb"] {
-          background: #34495e;
-          color: #ecf0f1;
+         border-top:2px solid #34495e;
       }
       .header[month="Mar"] {
-          background: #3498db;
-          color: #ecf0f1;
+         border-top:2px solid #3498db;
       }
       .header[month="Apr"] {
-          background: #f1c40f;
-          color: #ecf0f1;
+          border-top:2px solid #f1c40f;
       }
       .header[month="May"] {
-          background: #2ecc71;
-          color: #ecf0f1;
+          border-top:2px solid #2ecc71;
       }
       .header[month="Jun"] {
-          background: #e74c3c;
-          color: #ecf0f1;
+          border-top:2px solid #e74c3c;
       }
       .header[month="Jul"] {
-          background: #9b59b6;
-          color: #ecf0f1;
+          border-top:2px solid #9b59b6;
       }
       .header[month="Aug"] {
-          background: #2c3e50;
-          color: #ecf0f1;
+          border-top:2px solid #2c3e50;
       }
       .header[month="Sep"] {
-          background: #d35400;
-          color: #ecf0f1;
+          border-top:2px solid #d35400;
       }
       .header[month="Oct"] {
-          background: #3498db;
-          color: #ecf0f1;
+          border-top:2px solid #3498db;
       }
       .header[month="Nov"] {
-          background: #c0392b;
-          color: #ecf0f1;
+          border-top:2px solid #c0392b;
       }
       .header[month="Dec"] {
-          background: #7f8c8d;
-          color: #ecf0f1;
-      }
-      .header[today="true"]{
-            outline:3px solid red;
+          border-top:2px solid #7f8c8d;
       }
       .header div {
           flex: 1;
@@ -76,16 +61,22 @@
           align-self: center;
           font-size: 1.7rem;
       }
+      .event-list{
+          padding: 8px;
+          overflow: auto;
+      }
     </style>
     <div class="header" month$="{{month}}" today$="{{today}}">
         <div class="month">[[month]]</div>
         <div class="date">[[day]]</div>
         <div></div>
     </div>
-    <div>
-        <tyche-event-list-item
-            event="Go to school"
-        ></tyche-event-list-item>
+    <div class="event-list">
+        <template is="dom-repeat" items="{{events}}">
+            <tyche-event-list-item
+                event="{{item}}"
+            ></tyche-event-list-item>
+        </template>
     </div>
   </template>
 
@@ -101,9 +92,28 @@
       }
         ready () {
             this.mDate = moment(this.date);
+            this.tomorrow = moment(moment(this.date)).add(1, 'days');
             this.day = this.mDate.date();
             this.month = this.mDate.format("MMM")
             this.today =  moment().isSame(this.mDate, 'd').toString();
+
+            firebase
+                .database()
+                .ref('event')
+                .orderByChild('startTime')
+                .startAt(this.mDate.format('YYYY-MM-DD'))
+                .endAt(this.tomorrow.format('YYYY-MM-DD'))
+                .once("value", (snapshot) => {
+                    const val = snapshot.val();
+                    if(val){
+                        this.events = Object.keys(val).map( eventKey => {
+                            return val[eventKey];
+                        })
+                    }
+                    else{
+                        this.noEvents = true;
+                    }
+                });
             super.ready();
         }
     }

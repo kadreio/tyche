@@ -3,7 +3,7 @@
   "description": "A modern web based calendar.",
   "main": "index.html",
   "dependencies": {
-    "polymer": "Polymer/polymer#^2.0.0-rc.2",
+    "polymer": "Polymer/polymer#^2.0.0-rc.3",
     "moment": "^2.17.1"
   },
   "devDependencies": {
@@ -13,6 +13,7 @@
     "webcomponentsjs": "webcomponents/webcomponentsjs#1.0.0-rc.5"
   },
   "resolutions": {
-    "polymer": "^2.0.0-rc.2"
+    "polymer": "^2.0.0-rc.3",
+    "shadycss": "webcomponents/shadycss#^v1.0.0-rc.2"
   }
 }

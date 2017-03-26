@@ -1,7 +1,9 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<script src="../../bower_components/moment/moment.js"></script>
 <link rel="import" href="../tyche-month/tyche-month.html">
+<link rel="import" href="../tyche-day/tyche-day.html">
 <link rel="import" href="../tyche-login/tyche-login.html">
+
+
 
 <dom-module id="tyche-app">
   <template>
@@ -13,13 +15,35 @@
 
       }
       tyche-control-panel {
-        width: 250px;
+        width: 300px;
+        display: flex;
+        flex-shrink: 0;
+        justify-content: space-between;
+        padding: 16px;
+        padding-top: 8px;
+        background: #2c3e50;
+        flex-direction: column;
       }
+       tyche-control-panel tyche-day{
+           height:200px;
+           width:100%;
+           color: white;
+       }
+       h1{
+           color: white;
+       }
       tyche-month{
         flex: 1;
+        overflow: auto;
       }
-      .top-bar
-
+      .logout{
+          align-self: flex-end;
+      }
+      h6{
+          text-align: right;
+          color: white;
+          cursor: pointer;
+      }
     </style>
 
     <template is="dom-if" if="{{!loggedin}}">
@@ -29,7 +53,18 @@
     </template>
     <template is="dom-if" if="{{loggedin}}">
         <tyche-control-panel>
-            <div on-click="logout">Logout</div>
+            <div class="">
+                <h1>Today</h1>
+                <tyche-day day="[[today]]"> </tyche-day>
+            </div>
+            <div class="">
+                <h6 on-click="addCalendar">
+                    add calendar
+                </h6>
+                <h6 class="logout" on-click="logout">
+                    logout
+                </h6>
+            </div>
         </tyche-control-panel>
         <tyche-month month="{{today}}"></tyche-month>
     </template>
@@ -48,8 +83,55 @@
         }
       }
       logout() {
-          console.log('here');
           firebase.auth().signOut();
+      }
+      addCalendar () {
+            // Client ID and API key from the Developer Console
+            var CLIENT_ID = '630899033557-ptlvvjngen8flpmaqmnj73k06hj9ddck.apps.googleusercontent.com';
+
+            // Array of API discovery doc URLs for APIs used by the quickstart
+            var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
+
+            // Authorization scopes required by the API; multiple scopes can be
+            // included, separated by spaces.
+            var SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
+
+            function initClient() {
+                gapi.client.init({
+                    discoveryDocs: DISCOVERY_DOCS,
+                    clientId: CLIENT_ID,
+                    scope: SCOPES
+                }).then(function(){
+                    if(!gapi.auth2.getAuthInstance().isSignedIn.get()){
+                        gapi.auth2.getAuthInstance().signIn();
+                    }
+                    else {
+                        gapi.client.calendar.events.list({
+                            'calendarId': 'primary',
+                            'timeMin': (moment().add(-30, 'days')).toISOString(),
+                            'showDeleted': false,
+                            'singleEvents': true,
+                            'maxResults': 1000,
+                            'orderBy': 'startTime'
+                        })
+                        .then(function(response) {
+                            var updates = {};
+                            response.result.items.forEach((event) => {
+                                console.log(event);
+                                if(event && event.start.dateTime){
+                                    event.startTime = event.start.dateTime;
+                                    event.endTime = event.end.dateTime;
+                                    updates['/event/'+event.id] = event;
+                                }
+                            });
+                            firebase.database().ref().update(updates);
+                        });
+                    }
+
+                });
+            }
+          gapi.load('client:auth2', initClient);
+
       }
       ready() {
           firebase.auth().onAuthStateChanged((user) => {
@@ -64,6 +146,9 @@
       }
       handleError(){
           console.log('foo');
+      }
+      handleClientLoad(){
+          console.log('loaded');
       }
     }
 
