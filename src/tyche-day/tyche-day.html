@@ -64,17 +64,21 @@
       .event-list{
           padding: 8px;
           overflow: auto;
+          flex:1;
+      }
+      .x-event-list[weekend="true"]{
+          background: #f7f7f7;
       }
     </style>
-    <div class="header" month$="{{month}}" today$="{{today}}">
+    <div class="header" month$="[[month]]" today$="[[today]]">
         <div class="month">[[month]]</div>
         <div class="date">[[day]]</div>
         <div></div>
     </div>
-    <div class="event-list">
-        <template is="dom-repeat" items="{{events}}">
+    <div class="event-list" weekend$="[[isWeekend]]">
+        <template is="dom-repeat" items="[[events]]">
             <tyche-event-list-item
-                event="{{item}}"
+                event="[[item]]"
             ></tyche-event-list-item>
         </template>
     </div>
@@ -96,7 +100,7 @@
             this.day = this.mDate.date();
             this.month = this.mDate.format("MMM")
             this.today =  moment().isSame(this.mDate, 'd').toString();
-
+            this.isWeekend = (this.mDate.day() == 6 || this.mDate.day() == 0).toString();
             firebase
                 .database()
                 .ref('event')

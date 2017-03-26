@@ -134,14 +134,18 @@
 
       }
       ready() {
+          this.loggedin = Boolean(localStorage.loggedin);
           firebase.auth().onAuthStateChanged((user) => {
               if (user) {
-                  console.log(user);
                 this.loggedin = true;
               } else {
                 this.loggedin = false;
               }
+              console.log(this.loggedin);
+              localStorage.loggedin = this.loggedin;
             });
+            console.log(this.loggedin);
+
             super.ready();
       }
       handleError(){

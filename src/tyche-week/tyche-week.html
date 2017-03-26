@@ -15,11 +15,10 @@
             border-top: 1px solid rgba(0,0,0,.2);
             border-left: 1px solid rgba(0,0,0,.2);
             width: calc(100% / 7);
-            flex-shrink: 0;
         }
     </style>
 
-        <template is="dom-repeat" items="{{days}}">
+        <template is="dom-repeat" items="[[days]]">
             <tyche-day date="[[item]]"></tyche-day>
         </template>
     </template>

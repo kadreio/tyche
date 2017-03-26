@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
-    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="/favicon.png"/>
 
     <title>Tyche</title>
     <meta name="description" content="Tyche description">
@@ -21,7 +21,8 @@
     <link rel="stylesheet" href="https://cdn.css.net/libs/spectre.css/0.2.7/spectre.min.css">
     <script src="/bower_components/webcomponentsjs/webcomponents-loader.js"></script>
     <script src="/bower_components/moment/min/moment.min.js"></script>
-
+    <script src="/bower_components/redux/index.js"></script>
+    <link rel="import" href="/bower_components/polymer-redux/polymer-redux.html">
     <link rel="import" href="/src/tyche-app/tyche-app.html">
     <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-auth.js"></script>
@@ -31,9 +32,7 @@
       var config = {
         apiKey: "AIzaSyAoIFVF8DZhko8hCRYJDELMkXyvPDFn0o4",
         authDomain: "tyche-54bd2.firebaseapp.com",
-        databaseURL: "https://tyche-54bd2.firebaseio.com",
-        storageBucket: "tyche-54bd2.appspot.com",
-        messagingSenderId: "630899033557"
+        databaseURL: "https://tyche-54bd2.firebaseio.com"
       };
       firebase.initializeApp(config);
 
