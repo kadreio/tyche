@@ -45,32 +45,34 @@
           cursor: pointer;
       }
     </style>
+    <template is="dom-if" if="{{!loggedin}}">
+        <tyche-login loggedin="{{loggedin}}">
 
-
-    <tyche-control-panel>
-        <div class="">
-            <div class="header">
-                <h1>Today</h1>
-                <template is="dom-if" if="{{!loggedin}}">
-                    <tyche-login loggedin="{{loggedin}}">
-
-                    </tyche-login>
+        </tyche-login>
+    </template>
+    <template is="dom-if" if="{{loggedin}}">
+        <tyche-control-panel>
+            <div class="">
+                <div class="header">
+                    <h1>Today</h1>
+                </div>
+                <tyche-day day="[[today]]"> </tyche-day>
+            </div>
+            <div class="">
+                <template is="dom-if" if="{{loggedin}}">
+                    <h6 on-click="addCalendar">
+                        add calendar
+                    </h6>
+                    <h6 class="logout" on-click="logout">
+                        logout
+                    </h6>
                 </template>
             </div>
-            <tyche-day day="[[today]]"> </tyche-day>
-        </div>
-        <div class="">
-            <template is="dom-if" if="{{loggedin}}">
-                <h6 on-click="addCalendar">
-                    add calendar
-                </h6>
-                <h6 class="logout" on-click="logout">
-                    logout
-                </h6>
-            </template>
-        </div>
-    </tyche-control-panel>
-    <tyche-month month="{{today}}"></tyche-month>
+        </tyche-control-panel>
+
+        <tyche-month month="{{today}}"></tyche-month>
+    </template>
+
   </template>
 
   <script>
@@ -114,13 +116,13 @@
                         })
                         .then(function(response) {
                             let updates = {};
-                            console.log(res)
+                            console.log(response)
                             response.result.items.forEach((event) => {
                                 console.log(event);
                                 if(event && event.start.dateTime){
                                     event.startTime = event.start.dateTime;
                                     event.endTime = event.end.dateTime;
-                                    updates['/users'/firebase.auth().currentUser.uid+'/events/'+event.id] = event;
+                                    updates['/users/'+firebase.auth().currentUser.uid+'/events/'+event.id] = event;
                                 }
                             });
                             firebase.database().ref().update(updates);

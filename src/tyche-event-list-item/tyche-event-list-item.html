@@ -8,31 +8,47 @@
         flex-direction: column;
       }
       div {
-          padding: 4px 4px 0px 4px;;
+
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+      }
+      small{
+          flex-shrink: 0;
+          margin-left: 4px;
+      }
+      span{
+          flex: 1;
           white-space: nowrap;
-            text-overflow: ellipsis;
-            width: 100%;
-            overflow: hidden;
+          text-overflow: ellipsis;
+          overflow: hidden;
       }
     </style>
     <div>
-        [[title]]
+         <span>[[title]]</span> <small>[[timeOfDay]]</small>
     </div>
   </template>
 
   <script>
     class TycheEventListItem extends Polymer.Element {
-      static get is() { return 'tyche-event-list-item'; }
-      static get properties() {
-        return {
-            event: {
-                type: Object
-            }
-        };
-      }
-      ready() {
-          this.title = this.event.summary;
-          super.ready();
+        static get is() { return 'tyche-event-list-item'; }
+        static get properties() {
+            return {
+                event: {
+                    type: Object
+                }
+            };
+        }
+        ready() {
+            this.title = this.event.summary;
+
+            const eventTime = moment(this.event.startTime);
+            let time = eventTime.format('h') + (eventTime.minutes() ? (':' + eventTime.format('mm')) : '');
+            time = time + ((eventTime.hour()) >= 12 ? 'p' : 'a');
+
+            this.timeOfDay = time;
+            super.ready();
       }
     }
 

@@ -81,6 +81,9 @@
                 event="[[item]]"
             ></tyche-event-list-item>
         </template>
+        <template is="dom-if" if="[[noEvents]]">
+            <em>No Events</em>
+        </template>
     </div>
   </template>
 
@@ -104,7 +107,7 @@
             firebase.auth().onAuthStateChanged((user) => {
                 firebase
                     .database()
-                    .ref(user.uid+'/events')
+                    .ref('/users/'+user.uid+'/events')
                     .orderByChild('startTime')
                     .startAt(this.mDate.format('YYYY-MM-DD'))
                     .endAt(this.tomorrow.format('YYYY-MM-DD'))
@@ -115,6 +118,8 @@
                         if(val){
                             this.events = Object.keys(val).map( eventKey => {
                                 return val[eventKey];
+                            }).sort(function(a,b){
+                                return a.startTime > b.startTime ? '1' : '-1';
                             })
                         }
                         else{

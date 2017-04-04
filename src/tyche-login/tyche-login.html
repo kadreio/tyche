@@ -41,8 +41,6 @@
                 .then((response) => {
                     this.loggedin = true;
                     localStorage.loggedin = this.loggedin;
-                    window.location.reload();
-
                 })
                 .catch((error) => {
                     console.error(error);

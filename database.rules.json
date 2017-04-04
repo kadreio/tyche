@@ -2,8 +2,12 @@
   "rules": {
     ".read": "auth != null",
     ".write": "auth != null",
-    "event": {
-      ".indexOn": "startTime"
+    "users":{
+      "$userId":{
+       "events": {
+          ".indexOn": "startTime"
+        }
+      }
     }
   }
 }
