@@ -15,7 +15,7 @@
         "headers": [
           {
             "key": "Link",
-            "value": "</src/tyche-app/tyche-app.html>;rel=preload;as=document;nopush,</src/tyche-day/tyche-day.html>;rel=preload;as=document;nopush,</src/tyche-month/tyche-month.html>;rel=preload;as=document;nopush,</src/tyche-week/tyche-week.html>;rel=preload;as=document;nopush,</src/tyche-event-list-item/tyche-event-list-item.html>;rel=preload;as=document;nopush,</src/tyche-day/tyche-day.html>;rel=preload;as=document;nopush"
+            "value": "</src/tyche-app/tyche-app.html>;rel=preload;as=script;nopush,</src/tyche-day/tyche-day.html>;rel=preload;as=script;nopush,</src/tyche-month/tyche-month.html>;rel=preload;as=script;nopush,</src/tyche-week/tyche-week.html>;rel=preload;as=script;nopush,</src/tyche-event-list-item/tyche-event-list-item.html>;rel=preload;as=script;nopush,</src/tyche-day/tyche-day.html>;rel=preload;as=script;nopush"
           }
         ]
       }]

@@ -46,56 +46,54 @@
       }
     </style>
 
-    <template is="dom-if" if="{{!loggedin}}">
-        <tyche-login loggedin="{{loggedin}}">
 
-        </tyche-login>
-    </template>
-    <template is="dom-if" if="{{loggedin}}">
-        <tyche-control-panel>
-            <div class="">
+    <tyche-control-panel>
+        <div class="">
+            <div class="header">
                 <h1>Today</h1>
-                <tyche-day day="[[today]]"> </tyche-day>
+                <template is="dom-if" if="{{!loggedin}}">
+                    <tyche-login loggedin="{{loggedin}}">
+
+                    </tyche-login>
+                </template>
             </div>
-            <div class="">
+            <tyche-day day="[[today]]"> </tyche-day>
+        </div>
+        <div class="">
+            <template is="dom-if" if="{{loggedin}}">
                 <h6 on-click="addCalendar">
                     add calendar
                 </h6>
                 <h6 class="logout" on-click="logout">
                     logout
                 </h6>
-            </div>
-        </tyche-control-panel>
-        <tyche-month month="{{today}}"></tyche-month>
-    </template>
+            </template>
+        </div>
+    </tyche-control-panel>
+    <tyche-month month="{{today}}"></tyche-month>
   </template>
 
   <script>
     class MyApplication extends Polymer.Element {
-      static get is() { return 'tyche-app'; }
-      static get properties() {
-        return {
-            loggedin: {
-                type: Boolean,
-                value: false
-            },
-            today: moment()
+        static get is() { return 'tyche-app'; }
+        static get properties() {
+            return {
+                loggedin: {
+                    type: Boolean,
+                    value: false
+                },
+                today: moment()
+            }
         }
-      }
-      logout() {
-          firebase.auth().signOut();
-      }
-      addCalendar () {
-            // Client ID and API key from the Developer Console
-            var CLIENT_ID = '630899033557-ptlvvjngen8flpmaqmnj73k06hj9ddck.apps.googleusercontent.com';
-
-            // Array of API discovery doc URLs for APIs used by the quickstart
-            var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
-
-            // Authorization scopes required by the API; multiple scopes can be
-            // included, separated by spaces.
-            var SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
-
+        logout() {
+            firebase.auth().signOut();
+            window.location.reload();
+        }
+        addCalendar () {
+            const CLIENT_ID = '630899033557-ptlvvjngen8flpmaqmnj73k06hj9ddck.apps.googleusercontent.com';
+            const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
+            const SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
+            console.log('here');
             function initClient() {
                 gapi.client.init({
                     discoveryDocs: DISCOVERY_DOCS,
@@ -115,13 +113,14 @@
                             'orderBy': 'startTime'
                         })
                         .then(function(response) {
-                            var updates = {};
+                            let updates = {};
+                            console.log(res)
                             response.result.items.forEach((event) => {
                                 console.log(event);
                                 if(event && event.start.dateTime){
                                     event.startTime = event.start.dateTime;
                                     event.endTime = event.end.dateTime;
-                                    updates['/event/'+event.id] = event;
+                                    updates['/users'/firebase.auth().currentUser.uid+'/events/'+event.id] = event;
                                 }
                             });
                             firebase.database().ref().update(updates);
@@ -130,30 +129,23 @@
 
                 });
             }
-          gapi.load('client:auth2', initClient);
-
-      }
-      ready() {
-          this.loggedin = Boolean(localStorage.loggedin);
-          firebase.auth().onAuthStateChanged((user) => {
-              if (user) {
-                this.loggedin = true;
-              } else {
-                this.loggedin = false;
-              }
-              console.log(this.loggedin);
-              localStorage.loggedin = this.loggedin;
+        gapi.load('client:auth2', initClient);
+        }
+        ready() {
+            this.loggedin = Boolean(localStorage.loggedin);
+            firebase.auth().onAuthStateChanged((user) => {
+                if (user) {
+                    this.loggedin = true;
+                } else {
+                    this.loggedin = false;
+                }
+                localStorage.loggedin = this.loggedin;
             });
-            console.log(this.loggedin);
-
             super.ready();
-      }
-      handleError(){
-          console.log('foo');
-      }
-      handleClientLoad(){
-          console.log('loaded');
-      }
+        }
+        handleError(err){
+            console.error(err);
+        }
     }
 
     window.customElements.define(MyApplication.is, MyApplication);

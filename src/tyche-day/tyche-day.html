@@ -101,23 +101,28 @@
             this.month = this.mDate.format("MMM")
             this.today =  moment().isSame(this.mDate, 'd').toString();
             this.isWeekend = (this.mDate.day() == 6 || this.mDate.day() == 0).toString();
-            firebase
-                .database()
-                .ref('event')
-                .orderByChild('startTime')
-                .startAt(this.mDate.format('YYYY-MM-DD'))
-                .endAt(this.tomorrow.format('YYYY-MM-DD'))
-                .once("value", (snapshot) => {
-                    const val = snapshot.val();
-                    if(val){
-                        this.events = Object.keys(val).map( eventKey => {
-                            return val[eventKey];
-                        })
-                    }
-                    else{
-                        this.noEvents = true;
-                    }
-                });
+            firebase.auth().onAuthStateChanged((user) => {
+                firebase
+                    .database()
+                    .ref(user.uid+'/events')
+                    .orderByChild('startTime')
+                    .startAt(this.mDate.format('YYYY-MM-DD'))
+                    .endAt(this.tomorrow.format('YYYY-MM-DD'))
+                    .once("value", (snapshot) => {
+                        console.log(firebase.auth().currentUser.uid);
+
+                        const val = snapshot.val();
+                        if(val){
+                            this.events = Object.keys(val).map( eventKey => {
+                                return val[eventKey];
+                            })
+                        }
+                        else{
+                            this.noEvents = true;
+                        }
+                    });
+            });
+
             super.ready();
         }
     }
