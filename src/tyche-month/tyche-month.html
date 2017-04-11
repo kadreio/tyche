@@ -85,13 +85,12 @@
             }
         }
         ready() {
-
+            super.ready();
             this._init();
             this.$.calendar.addEventListener('scroll', e => {
                 this._onCalendarScroll(e);
             } );
 
-            super.ready();
         }
         _init() {
             const WEEKS_TO_SHOW = 10;
